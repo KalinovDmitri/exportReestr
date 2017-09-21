@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportLNDreestr", "ExportLNDreestr\ExportLNDreestr.csproj", "{FD676279-0AAF-4F5A-82BC-408B0DFCCAB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocsVisionContext", "..\UniversalSprUpdate\DocsVisionContext\DocsVisionContext.csproj", "{5D00DFC0-7AD9-46E8-A791-40572D20BFE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FD676279-0AAF-4F5A-82BC-408B0DFCCAB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD676279-0AAF-4F5A-82BC-408B0DFCCAB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD676279-0AAF-4F5A-82BC-408B0DFCCAB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D00DFC0-7AD9-46E8-A791-40572D20BFE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D00DFC0-7AD9-46E8-A791-40572D20BFE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D00DFC0-7AD9-46E8-A791-40572D20BFE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D00DFC0-7AD9-46E8-A791-40572D20BFE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

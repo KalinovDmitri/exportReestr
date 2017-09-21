@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5D00DFC0-7AD9-46E8-A791-40572D20BFE4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DocsVisionContext</RootNamespace>
+    <AssemblyName>DocsVisionContext</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DocsVision.ApprovalDesigner.ObjectModel, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.ApprovalDesigner.ObjectModel\v4.0_5.0.0.0__7148afe997f90519\DocsVision.ApprovalDesigner.ObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.BackOffice.Cards, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.BackOffice.Cards\v4.0_5.0.0.0__7148afe997f90519\DocsVision.BackOffice.Cards.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.BackOffice.ObjectModel, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.BackOffice.ObjectModel\v4.0_5.0.0.0__7148afe997f90519\DocsVision.BackOffice.ObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Platform\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform.CardLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Platform.CardLib\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.CardLib.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform.ObjectManager, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Platform.ObjectManager\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.ObjectManager.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform.ObjectManager.Interop, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_32\DocsVision.Platform.ObjectManager.Interop\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.ObjectManager.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform.ObjectModel, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Platform.ObjectModel\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.ObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform.StorageServer, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Platform.StorageServer\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.StorageServer.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform.SystemCards.ObjectModel, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Platform.SystemCards.ObjectModel\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.SystemCards.ObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Workflow.Objects, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Workflow.Objects\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Workflow.Objects.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Workflow.Runtime, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Workflow.Runtime\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Workflow.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DocsVisionContext.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

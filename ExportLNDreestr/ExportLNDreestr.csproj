@@ -35,8 +35,77 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.4.0\lib\net45\CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DocsVision.BackOffice.Cards, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.BackOffice.Cards\v4.0_5.0.0.0__7148afe997f90519\DocsVision.BackOffice.Cards.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.BackOffice.ObjectModel, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.BackOffice.ObjectModel\v4.0_5.0.0.0__7148afe997f90519\DocsVision.BackOffice.ObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.BackOffice.WinForms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.BackOffice.WinForms\v4.0_5.0.0.0__7148afe997f90519\DocsVision.BackOffice.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Docsvision.DocumentsManagement, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\Docsvision.DocumentsManagement\v4.0_5.0.0.0__7148afe997f90519\Docsvision.DocumentsManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Platform\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform.CardHost, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Platform.CardHost\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.CardHost.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform.CardLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Platform.CardLib\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.CardLib.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform.ObjectManager, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL" />
+    <Reference Include="DocsVision.Platform.ObjectManager.Interop, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_32\DocsVision.Platform.ObjectManager.Interop\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.ObjectManager.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform.ObjectModel, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Platform.ObjectModel\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.ObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform.StorageServer, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Platform.StorageServer\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.StorageServer.dll</HintPath>
+    </Reference>
+    <Reference Include="DocsVision.Platform.SystemCards.ObjectModel, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7148afe997f90519, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\DocsVision.Platform.SystemCards.ObjectModel\v4.0_5.0.0.0__7148afe997f90519\DocsVision.Platform.SystemCards.ObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -55,7 +124,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
+    <Compile Include="ViewModel.cs" />
+    <Page Include="View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -63,8 +133,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="View.xaml.cs">
+      <DependentUpon>View.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -86,6 +156,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -94,6 +165,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\UniversalSprUpdate\DocsVisionContext\DocsVisionContext.csproj">
+      <Project>{5d00dfc0-7ad9-46e8-a791-40572d20bfe4}</Project>
+      <Name>DocsVisionContext</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AllLND.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
