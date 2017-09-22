@@ -26,6 +26,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace ExportLNDreestr
 {
@@ -43,15 +44,14 @@ namespace ExportLNDreestr
             {
                 if (_log == value) return;
                 _log = value;
-                OnPropertyChanged();
+                OnPropertyChanged("LogBox");
             }
         }
         
 
         public ViewModel()
         {
-            LogBox = "тест";
-            
+
         }
 
 
@@ -76,8 +76,10 @@ namespace ExportLNDreestr
 
         public void Test()
         {
-            LogBox += "asdasd";
-          
+            LogBox += "один\n";
+            Thread.Sleep(2000);
+            LogBox += "два\n";
+
         }
         private void button_Click()
         {
@@ -374,7 +376,7 @@ namespace ExportLNDreestr
         }
 
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

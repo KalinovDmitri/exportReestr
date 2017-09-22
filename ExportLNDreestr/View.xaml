@@ -43,7 +43,7 @@
             Margin="0,42,10,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
-            Text="{Binding LogBox}"
+            Text="{Binding LogBox, UpdateSourceTrigger=PropertyChanged}"
             TextWrapping="Wrap" />
 
     </Grid>
