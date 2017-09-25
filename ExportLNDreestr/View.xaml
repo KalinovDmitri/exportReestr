@@ -20,31 +20,30 @@
             <ColumnDefinition Width="259*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="61*" />
-            <RowDefinition Height="3*" />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Button
             x:Name="button"
+            Height="22"
             Margin="10,10,38,0"
             VerticalAlignment="Top"
             Command="{Binding ExportRO}"
             Content="Реестр ЛНД Общества" />
-        <StatusBar
-            Grid.RowSpan="2"
-            Grid.ColumnSpan="3"
-            Height="27"
-            Margin="10,0,10,10"
-            VerticalAlignment="Bottom" />
         <TextBox
             x:Name="LogTextBox"
             Grid.ColumnSpan="3"
-            Width="497"
-            Height="228"
-            Margin="0,42,10,0"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
+            Margin="10,42,10,40"
             Text="{Binding LogBox, UpdateSourceTrigger=PropertyChanged}"
-            TextWrapping="Wrap" />
+            TextWrapping="Wrap" 
+            ScrollViewer.VerticalScrollBarVisibility="Auto" TextChanged="LogTextBox_TextChanged" />
+        <ProgressBar
+            Grid.ColumnSpan="3"
+            Height="24"
+            Margin="10,0,10,10"
+            VerticalAlignment="Bottom" 
+            Minimum="0"
+            Maximum="{Binding MaxProgress}"
+            Value="{Binding Progress}"/>
 
     </Grid>
 </Window>

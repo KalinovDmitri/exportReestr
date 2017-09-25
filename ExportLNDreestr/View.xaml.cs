@@ -33,9 +33,13 @@ namespace ExportLNDreestr
         public MainWindow()
         {
             InitializeComponent();
-           
+            
         }
 
+        private void LogTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            LogTextBox.ScrollToEnd();
+        }
     }
   
 }

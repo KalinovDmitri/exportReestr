@@ -22,11 +22,12 @@ using DocsVisionContext;
 using Excel = Microsoft.Office.Interop.Excel;
 using DocsVision.BackOffice.ObjectModel;
 using GalaSoft.MvvmLight.CommandWpf;
-//using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
+
+
 
 namespace ExportLNDreestr
 {
@@ -36,6 +37,9 @@ namespace ExportLNDreestr
         private ObjectContext Context = null;
         private UserSession Session = null;
         private string _log;
+        private int _progress;
+        private int _maxProgress = 10;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public string LogBox
         {
@@ -48,10 +52,29 @@ namespace ExportLNDreestr
             }
         }
         
-
+        public int MaxProgress
+        {
+            get { return _maxProgress; }
+            set
+            {
+                if (_maxProgress == value) return;
+                _maxProgress = value;
+                OnPropertyChanged("MaxProgress");
+            }
+        }
+        public int Progress
+        {
+            get { return _progress; }
+            set
+            {
+                if (_progress == value) return;
+                _progress = value;
+                OnPropertyChanged("Progress");
+            }
+        }
         public ViewModel()
         {
-
+           
         }
 
 
@@ -63,60 +86,70 @@ namespace ExportLNDreestr
         }
 
         private ICommand _exportRO;
+       
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public ICommand ExportRO
         {
             get
             {
-                return _exportRO ?? (_exportRO = new RelayCommand(Test));
+                return _exportRO ?? (_exportRO = new RelayCommand(Start_thread));
             }
         }
 
-        public void Test()
+        public void Start_thread()
         {
-            LogBox += "один\n";
-            Thread.Sleep(2000);
-            LogBox += "два\n";
-
+            Thread tr = new Thread(Start_export);
+            tr.Start();
+            
         }
-        private void button_Click()
+        private void Start_export()
         {
-            LogBox += "asdasd";
-            InicializeContext();
             string filePath = @"D:\Реетры ЛНД\РЛО.xlsx";
-
             StreamReader reader = new StreamReader("AllLND.txt");
             string queryXML = reader.ReadToEnd();
             reader.Close();
+            LogBox += "Запуск\n";
+            InicializeContext();
 
             List<Guid> IDs = new List<Guid>();
             CardDataCollection coll = Session.CardManager.FindCards(queryXML);
-            LogBox += string.Format("{1}|| Найдено {0} карточек ЛНД\n", coll.Count.ToString(), DateTime.Now.ToString("U"));
+            LogBox += string.Format("{1}|| Найдено {0} карточек ЛНД\n", coll.Count.ToString(), DateTime.Now.ToString("u"));
+            CardManager CM = Session.CardManager;
+            CardData cd = CM.GetCardData(IDs[0]);
+            
 
+            //cd.Sections[CM.CardTypes.]
+     
             foreach (CardData el in coll)
             {
                 if (!Equals(el.Id, Guid.Empty))
                     IDs.Add(el.Id);
             }
 
-            int counter = IDs.Count;
-            LogBox += string.Format("{1}|| Преобразовано в Guid {0} объектов\n", counter.ToString(), DateTime.Now.ToString("U"));
+            int counter = 100;// IDs.Count;
+            LogBox += string.Format("{1}|| Преобразовано в Guid {0} объектов\n", counter.ToString(), DateTime.Now.ToString("u"));
 
             ExcelDocument exelDoc = new ExcelDocument(filePath);
+            exelDoc.Visible = true;
             int indexRow = 5;
-
-            for (int i = 0; i < IDs.Count; i++)
+            MaxProgress = counter;
+            for (int i = 0; i < counter; i++)
             {
-                LogBox += string.Format("{3}|| Начата обработка карточки с ID: {0} {1} из {2}\n", IDs[i].ToString(), i + 1, counter, DateTime.Now.ToString("U"));
+                LogBox += string.Format("{3}|| Начата обработка карточки с ID: {0} {1} из {2}\n", IDs[i].ToString().ToUpper(), i + 1, counter, DateTime.Now.ToString("u"));
 
                 indexRow = ExcelExportCurrentCard(exelDoc, IDs[i], indexRow) + 1;
-
-                LogBox += string.Format("{3}|| Обработка карточки с ID: {0} -ЗАВЕРШЕНА {1} из {2}\n", IDs[i].ToString(), i + 1, counter, DateTime.Now.ToString("U"));
-
+                LogBox += string.Format("{3}|| Завершена обработка карточки с ID: {0} {1} из {2}\n", IDs[i].ToString().ToUpper(), i + 1, counter, DateTime.Now.ToString("u"));
+                Progress = i + 1;
             }
-            exelDoc.Visible = true;
+
+
+            Context.Dispose();
+            Session.Close();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+            MessageBox.Show("Выгрузка завершена");
         }
         private int ExcelExportCurrentCard(ExcelDocument exelDoc, Guid CardId, int index)
         {
