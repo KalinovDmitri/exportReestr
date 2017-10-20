@@ -28,22 +28,24 @@
             Margin="10,10,38,0"
             VerticalAlignment="Top"
             Command="{Binding ExportRO}"
-            Content="Реестр ЛНД Общества" />
+            Content="Реестр ЛНД Общества"
+            IsEnabled="{Binding IsEnableButton, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             x:Name="LogTextBox"
             Grid.ColumnSpan="3"
             Margin="10,42,10,40"
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
             Text="{Binding LogBox, UpdateSourceTrigger=PropertyChanged}"
-            TextWrapping="Wrap" 
-            ScrollViewer.VerticalScrollBarVisibility="Auto" TextChanged="LogTextBox_TextChanged" />
+            TextChanged="LogTextBox_TextChanged"
+            TextWrapping="Wrap" />
         <ProgressBar
             Grid.ColumnSpan="3"
             Height="24"
             Margin="10,0,10,10"
-            VerticalAlignment="Bottom" 
-            Minimum="0"
+            VerticalAlignment="Bottom"
             Maximum="{Binding MaxProgress}"
-            Value="{Binding Progress}"/>
+            Minimum="0"
+            Value="{Binding Progress}" />
 
     </Grid>
 </Window>
