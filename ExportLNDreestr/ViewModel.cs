@@ -40,6 +40,7 @@ namespace ExportLNDreestr
         private bool _isEnableButton = true;
         private int _progress;
         private int _maxProgress = 10;//первичное значение прогрессбара
+        private bool _isCanceled = false;
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion Fields
         #region PropertiesForView
@@ -48,8 +49,7 @@ namespace ExportLNDreestr
             get { return _log; }
             set
             {
-                if (_log == value) return;
-                _log = value;
+                _log += string.Format("{0}|| {1}\n", DateTime.Now.ToString("u"), value);
                 OnPropertyChanged("LogBox");
             }
         }
@@ -83,6 +83,7 @@ namespace ExportLNDreestr
                 OnPropertyChanged("Progress");
             }
         }
+      
         #endregion PropertiesForView
         #region Properties
         private CardData _refBaseUniversalCD = null;
@@ -97,14 +98,7 @@ namespace ExportLNDreestr
                 return _refBaseUniversalCD;
             }
         }
-        private ICommand _exportRO;
-        public ICommand ExportRO
-        {
-            get
-            {
-                return _exportRO ?? (_exportRO = new RelayCommand(Start_thread));
-            }
-        }
+
         private CardData _refState = null;
         private CardData RefState
         {
@@ -145,54 +139,76 @@ namespace ExportLNDreestr
             }
         }
         #endregion Properties
+        #region Commands
+        private ICommand _exportRO;
+        public ICommand ExportRO
+        {
+            get
+            {
+                return _exportRO ?? (_exportRO = new RelayCommand(StartTask));
+            }
+        }
+        private ICommand _cancel;
+        public ICommand CancelCommand
+        {
+            get
+            {
+                return _cancel ?? (_cancel = new RelayCommand(Cancel));
+
+            }
+        }
+        #endregion Commands
         #region Constructors
         public ViewModel()
         {
             if (dvContext == null && Session == null)
             {
                 InicializeContext();
-                LogBox += "Соединенияе с сервером установлено\n";
+                LogBox = "Соединенияе с сервером установлено";
             }
 
         }
         public ViewModel(UserSession _session)
         {
             Session = _session;
-            //Context = _context;
         }
         #endregion Constructors
         #region Methods
         private void InicializeContext()
         {
             dvContext = DocsVisionContextFactory.CreateDefault();
-            //Context = dvContext.CurrentContext;
             Session = dvContext.CurrentSession;
         }
 
-        public void Start_thread()
+
+        CancellationTokenSource cancelTokenSource;
+        public void Cancel()
         {
-            Thread tr = new Thread(Start_export);
-            tr.Start();
-           
-           
+            LogBox = "Поступила команда отмены операции";
+            cancelTokenSource.Cancel();
         }
-        private void Start_export()
+        public void StartTask()
         {
+            cancelTokenSource = new CancellationTokenSource();
+            CancellationToken token = cancelTokenSource.Token;
+            System.Threading.Tasks.Task.Run(() => Start_export(token));
+        }
+        private void Start_export(CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+            
             IsEnableButton = false;
             string filePath = Directory.GetCurrentDirectory() + @"\Sourse\РЛО.xlsx";
             StreamReader reader = new StreamReader(@"Sourse\AllLND.txt");
             string queryXML = reader.ReadToEnd();
             reader.Close();
-            LogBox += "Запуск\n";
+            LogBox = "Запуск";
            
 
             List<Guid> IDs = new List<Guid>();
             CardDataCollection coll = Session.CardManager.FindCards(queryXML);
-            LogBox += string.Format("{1}|| Найдено {0} карточек ЛНД\n", coll.Count.ToString(), DateTime.Now.ToString("u"));
-          
+            LogBox = string.Format("Найдено {0} карточек ЛНД", coll.Count.ToString());
 
-            //cd.Sections[CM.CardTypes.]
-     
             foreach (CardData el in coll)
             {
                 if (!Equals(el.Id, Guid.Empty))
@@ -200,23 +216,34 @@ namespace ExportLNDreestr
             }
 
             int counter =  IDs.Count;
-            LogBox += string.Format("{1}|| Преобразовано в Guid {0} объектов\n", counter.ToString(), DateTime.Now.ToString("u"));
+            LogBox = string.Format("Преобразовано в Guid {0} объектов", counter.ToString());
 
             ExcelDocument exelDoc = new ExcelDocument(filePath);
             exelDoc.Visible = true;
             int indexRow = 5;
             MaxProgress = counter;
+
             for (int i = 0; i < counter; i++)
             {
-                LogBox += string.Format("{3}|| Начата обработка карточки с ID: {0} {1} из {2}\n", IDs[i].ToString().ToUpper(), i + 1, counter, DateTime.Now.ToString("u"));
+                if (!token.IsCancellationRequested)
+                {
+                    LogBox = string.Format("Начата обработка карточки с ID: {0} {1} из {2}", IDs[i].ToString().ToUpper(), i + 1, counter);
 
-                indexRow = ExcelExportCurrentCardFromCardData(exelDoc, IDs[i], indexRow)+1;//ExcelExportCurrentCard(exelDoc, IDs[i], indexRow) + 1;
-                LogBox += string.Format("{3}|| Завершена обработка карточки с ID: {0} {1} из {2}\n", IDs[i].ToString().ToUpper(), i + 1, counter, DateTime.Now.ToString("u"));
-                Progress = i + 1;
+                    indexRow = ExcelExportCurrentCardFromCardData(exelDoc, IDs[i], indexRow) + 1;
+                    LogBox = string.Format("Завершена обработка карточки с ID: {0} {1} из {2}", IDs[i].ToString().ToUpper(), i + 1, counter);
+                    Progress = i + 1;
+                }
+                else
+                {
+                    if (exelDoc != null)
+                    {
+                        exelDoc.Close();
+                        break;
+                    }
+
+                }
             }
 
-
-            //Context.Dispose();
             Session.Close();
             GC.Collect();
             GC.WaitForPendingFinalizers();
