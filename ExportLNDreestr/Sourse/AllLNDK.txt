@@ -1,0 +1,11 @@
+﻿<Search Version="4300" Limit="0" CombineResults="OR" AllCards="true">
+<Scope>
+<Folders Enabled="true">
+<Folder>{13A13FE3-8EC1-41AD-9977-2AA06C23DFD1}</Folder>
+</Folders>
+</Scope>
+<FulltextSearch Mode="CardsAndFiles">
+<QueryString>
+</QueryString>
+</FulltextSearch>
+</Search>

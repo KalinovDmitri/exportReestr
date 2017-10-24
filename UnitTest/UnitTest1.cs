@@ -25,6 +25,8 @@ using Excel = Microsoft.Office.Interop.Excel;
 using Word = Microsoft.Office.Interop.Word;
 using ExportLNDreestr;
 using System.Windows;
+using ExportLNDreestr.AdditionalClasses;
+using Newtonsoft.Json;
 
 namespace UnitTest
 {
@@ -67,11 +69,53 @@ namespace UnitTest
         public void TestGetFullNameOfUnit()
         {
             ViewModel test = new ViewModel(Session);
-
+           
             string name = test.GetFullNameOfUnit("5AF2E7CE-B458-46BD-8D9E-965E754CF94B");
 
             Assert.IsNotNull(name, "Значение присуствует");
 
+        }
+
+        [TestMethod]
+        public void TryDeserialize()
+        {
+                      
+            using (StreamReader stream = new StreamReader(Directory.GetCurrentDirectory() + @"\Sourse\ConnectionSettings.json"))
+            {
+                string str = stream.ReadToEnd();
+                ConnectionSettings connect = JsonConvert.DeserializeObject<ConnectionSettings>(str);
+
+
+            }
+        }
+
+        [TestMethod]
+        public void TrySerialization()
+        {
+            ConnectionSettings set = new ConnectionSettings
+            {
+                password = "1",
+                username = "polizuk",
+                servername = "servak"
+            };
+
+            using (StreamWriter stream = new StreamWriter(Directory.GetCurrentDirectory() + @"\Sourse\ConnectionSettings1646.json",false))
+            {
+                //stream.
+                string ser = JsonConvert.SerializeObject(set);
+                stream.WriteLine(ser);
+                stream.Flush();
+                stream.Close();
+               // MessageBox.Show(connect.username);
+
+            }
+        }
+        [TestMethod]
+        public void TestGetFullPathToCopyTemplate()
+        {
+            ViewModel test = new ViewModel(Session);
+            string filePath = test.GetFullPathToCopyTemplate(Directory.GetCurrentDirectory() + @"\Sourse\РЛК.xlsx");
+            Assert.IsTrue(File.Exists(filePath));
         }
     }
 }
