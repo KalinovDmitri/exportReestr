@@ -449,7 +449,7 @@ namespace ExportLNDreestr
                 if (!Equals(el.Id, Guid.Empty))
                     IDs.Add(el.Id);
             }
-            int counter = IDs.Count;
+            int counter = 50;//IDs.Count;
             ExcelDocument exelDoc = new ExcelDocument(pathWithTemplate);
             exelDoc.Visible = true;
             int indexRow = 9;
@@ -487,12 +487,150 @@ namespace ExportLNDreestr
             IsEnableButtonCancel = false;
         }
 
-        private int ExcelExportCurrentCardFromCardDataK(ExcelDocument exelDoc, Guid guid, int indexRow)
+        private int ExcelExportCurrentCardFromCardDataK(ExcelDocument exelDoc, Guid CardId, int index)
         {
-            exelDoc.SetCellValue("раз", indexRow, 1);
-            return indexRow;
+            CardManager CM = Session.CardManager;
+            CardData CardDataLND = CM.GetCardData(CardId);
+
+            RowData additionalPropertiesLNDSection = CardDataLND.Sections[CardDataLND.Type.Sections["AdditionalPropertiesLND"].Id].FirstRow;
+            RowData systemLNDSection = CardDataLND.Sections[CardDataLND.Type.Sections["System"].Id].FirstRow;
+            RowData mainInfoLND = CardDataLND.Sections[CardDataLND.Type.Sections["MainInfo"].Id].FirstRow;
+
+            RowDataCollection hystoryLNDSection = CardDataLND.Sections[CardDataLND.Type.Sections["HystoryLND"].Id].Rows;
+            System.Drawing.Color color = default(System.Drawing.Color);
+
+            string typeLND = GetNameOfRefBaseUniversal(additionalPropertiesLNDSection["TypeLND"] != null ? additionalPropertiesLNDSection["TypeLND"].ToString() : string.Empty);
+            string name = mainInfoLND["Name"] != null ? mainInfoLND["Name"].ToString() : string.Empty;  
+            string approvalNumber = additionalPropertiesLNDSection["ApprovalNumber"] != null ? additionalPropertiesLNDSection["ApprovalNumber"].ToString() : string.Empty; 
+            string version = additionalPropertiesLNDSection["Version"] != null ? additionalPropertiesLNDSection["Version"].ToString() : string.Empty;//Версия ЛНД
+            //Получение статуса действия в ДО
+            Guid stateID = systemLNDSection["State"] != null ? new Guid(systemLNDSection["State"].ToString()) : Guid.Empty;  
+            RowData statesSprState = RefState.Sections[new Guid("521B4477-DD10-4F57-A453-09C70ADB7799")].GetRow(stateID);
+            string stateName = string.Empty;
+            switch (statesSprState["DefaultName"].ToString())
+            {
+                case "Approved":
+                    stateName = "Действует";
+                    break;
+                case "Cancelled":
+                case "NotValid":
+                    stateName = "Не действует";
+                    color = System.Drawing.Color.Red;
+                    break;
+                default:
+                    stateName = "Значение не попало в ожидаемы диапазон";
+                    break;
+            }
+            List<RowData> RDKAct = new List<RowData>();
+            List<RowData> RDOAct = new List<RowData>();
+
+            string RDKVv = string.Empty;
+            DateTime? dateRDKVv = null;
+            string RDOVv = string.Empty;
+            DateTime? dateRDOVv = null; 
+            string RDKFirstAct = string.Empty;
+            DateTime? dateRDKFirstAct = null;
+            string RDOFirstAct = string.Empty;
+            DateTime? dateRDOFirstAct = null;
+            string RDKOtm = string.Empty;
+            DateTime? dateRDKOtm = null;
+            string RDOOtm = string.Empty;
+            DateTime? dateRDOOtm = null;
+
+
+            if (hystoryLNDSection.Count > 0)
+            {
+                foreach (RowData row in hystoryLNDSection)
+                {
+                    Guid rdID = new Guid(row["RDId"].ToString());
+                    string typeRow = GetNameOfRefBaseUniversal(row["Type"].ToString());
+                    if (typeRow == "РД Компании о вводе")
+                    {
+                        RDKVv = rdID != Guid.Empty ? GetAltDecriptionRDCardData(rdID, true) : string.Empty;
+                        dateRDKVv = (DateTime?)row["Date"];
+                    }
+                    if (typeRow == "РД Общества о вводе")
+                    {
+                        RDOVv = rdID != Guid.Empty ? GetAltDecriptionRDCardData(rdID) : string.Empty;
+                        dateRDOVv = (DateTime?)row["Date"];
+                    }
+                    if (typeRow == "РД Компании об отмене")
+                    {
+                        RDKOtm = rdID != Guid.Empty ? GetAltDecriptionRDCardData(rdID, true) : string.Empty;
+                        dateRDKOtm = (DateTime?)row["Date"];
+                    }
+                    if (typeRow == "РД Общества об отмене")
+                    {
+                        RDOOtm = rdID != Guid.Empty ? GetAltDecriptionRDCardData(rdID) : string.Empty;
+                        dateRDOOtm = (DateTime?)row["Date"];
+                    }
+                    if (typeRow == "РД Компании об актуализации")
+                    {
+                        if (int.Parse(row["Number"].ToString()) == 1)
+                        {
+                            RDKFirstAct = rdID != Guid.Empty ? GetAltDecriptionRDCardData(rdID, true) : string.Empty;
+                            dateRDKFirstAct = (DateTime?)row["Date"];
+                        }
+                        else
+                        {
+                            RDKAct.Add(row);
+                        }
+                    }
+                    if (typeRow == "РД Общества об актуализации")
+                    {
+                        if (int.Parse(row["Number"].ToString()) == 1)
+                        {
+                            RDOFirstAct = rdID != Guid.Empty ? GetAltDecriptionRDCardData(rdID) : string.Empty;
+                            dateRDOFirstAct = (DateTime?)row["Date"];
+                        }
+                        else
+                        {
+                            RDOAct.Add(row);
+                        }
+
+                    }
+                }
+                
+            }
+
+            //ВВК Реквизиты РД (вид, дата, номер)
+            //ВВК срок утверждения и введения в действие в ДО
+            //ВВО Реквизиты РД (вид, дата, номер)
+            //ВВО Дата ввода в действие ЛНД
+            //ИЗМК Реквизиты РД (вид, дата, номер)
+            //ИЗМК Срок внесения изменений в ДО
+            //ИЗМО Реквизиты РД (вид, дата, номер)
+            //ИЗМО Дата внесения изменений в ЛНД 
+            //ОТМК Реквизиты РД (вид, дата, номер)
+            //ОТМК Срок внесения изменений в ДО
+            //ОТМО Реквизиты РД (вид, дата, номер)
+            //ОТМО Дата внесения изменений в ЛНД 
+
+
+
+
+
+
+            exelDoc.SetCellValue((index - 8).ToString(), index, 1);//Номер сироки
+            exelDoc.SetCellValue(string.Format("{0} \"{1}\"",typeLND,name), index, 2, color);//Вид и наименование ЛНД
+            exelDoc.SetCellValue(approvalNumber, index, 3, color);//Номер утвержденияЛНД
+            exelDoc.SetCellValue(version, index, 4, color);//Версия ЛНД
+            exelDoc.SetCellValue(stateName, index, 5, color);//Статус действия в ДО
+            exelDoc.SetCellValue(RDKVv, index, 6, color);//ВВК Реквизиты РД (вид, дата, номер)
+            exelDoc.SetCellValue(dateRDKVv.HasValue? dateRDKVv.Value.ToString("d") :  string.Empty, index, 7, color); //ВВК срок утверждения и введения в действие в ДО
+            exelDoc.SetCellValue(RDOVv, index, 8, color);//ВВO Реквизиты РД (вид, дата, номер)
+            exelDoc.SetCellValue(dateRDOVv.HasValue? dateRDOVv.Value.ToString("d") :  string.Empty, index, 9, color); //ВВО Дата ввода в действие ЛНД
+            exelDoc.SetCellValue(RDKFirstAct, index, 10, System.Drawing.Color.Blue);//ВВO Реквизиты РД (вид, дата, номер)
+            exelDoc.SetCellValue(dateRDKFirstAct.HasValue ? dateRDOVv.Value.ToString("d") : string.Empty, index, 11, System.Drawing.Color.Blue); //ВВО Дата ввода в действие ЛНД
+            exelDoc.SetCellValue(RDOFirstAct, index, 12, System.Drawing.Color.Blue);//ВВO Реквизиты РД (вид, дата, номер)
+            exelDoc.SetCellValue(dateRDOFirstAct.HasValue ? dateRDOVv.Value.ToString("d") : string.Empty, index, 13, System.Drawing.Color.Blue); //ВВО Дата ввода в действие ЛНД
+            exelDoc.SetCellValue(RDKOtm, index, 14, color);//ВВO Реквизиты РД (вид, дата, номер)
+            exelDoc.SetCellValue(RDOOtm, index, 16, color);//ВВO Реквизиты РД (вид, дата, номер)
+                                                           //тут должна быть актуализация
+
+            return index;
             //throw new NotImplementedException();
-            
+
         }
 
 
@@ -833,6 +971,38 @@ namespace ExportLNDreestr
             RowData kinde = RefKinds.Sections[new Guid("C7BA000C-6203-4D7F-8C6B-5CB6F1E6F851")].GetRow(typeID);
 
             typeRD = kinde["Name"].ToString();
+        }
+        public string GetAltDecriptionRDCardData(Guid rd, bool isCompany = false)
+        {
+            string description = string.Empty;
+            string number = string.Empty;
+            string typeRD;
+            DateTime? dateRD;
+
+            CardData rdCD = Session.CardManager.GetCardData(rd);
+
+            RowData for_LNDSection = rdCD.Sections[rdCD.Type.Sections["For_LND"].Id].FirstRow;
+            RowData MainInfoSection = rdCD.Sections[rdCD.Type.Sections["MainInfo"].Id].FirstRow;
+            RowData NumbersSection = rdCD.Sections[rdCD.Type.Sections["Numbers"].Id].FirstRow;
+            RowData SystemSection = rdCD.Sections[rdCD.Type.Sections["System"].Id].FirstRow;
+
+            Guid typeID = Guid.Parse(SystemSection["Kind"].ToString());
+            RowData kinde = RefKinds.Sections[new Guid("C7BA000C-6203-4D7F-8C6B-5CB6F1E6F851")].GetRow(typeID);
+            typeRD = kinde["Name"].ToString();
+
+            if (isCompany)
+            {
+                number = for_LNDSection["NumberOfRD"].ToString();
+                dateRD = (DateTime?)for_LNDSection["DateOfRD"];
+            }
+            else
+            {
+                number = NumbersSection["Number"].ToString();
+                dateRD = (DateTime?)MainInfoSection["RegDate"];
+            }
+
+            description = string.Format("{0} от {1:d} №{2}", typeRD, dateRD, number);
+            return description;
         }
         
         public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

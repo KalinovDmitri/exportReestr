@@ -36,7 +36,7 @@ namespace UnitTest
         private DocsVisionContext.DocsVisionContext dvContext = null;
         private ObjectContext Context = null;
         private UserSession Session = null;
-        
+        private ViewModel VievModelTst = null;
         /// <summary>
         /// Инициализация тестов
         /// </summary>
@@ -46,6 +46,7 @@ namespace UnitTest
             dvContext = DocsVisionContextFactory.CreateDefault();
             Context = dvContext.CurrentContext;
             Session = dvContext.CurrentSession;
+            VievModelTst = new ViewModel(Session);
         }
         /// <summary>
         /// Закрытие сессии и контекста
@@ -116,6 +117,11 @@ namespace UnitTest
             ViewModel test = new ViewModel(Session);
             string filePath = test.GetFullPathToCopyTemplate(Directory.GetCurrentDirectory() + @"\Sourse\РЛК.xlsx");
             Assert.IsTrue(File.Exists(filePath));
+        }
+        [TestMethod]
+        public void Test()
+        {
+            string NameRD = VievModelTst.GetAltDecriptionRDCardData(Guid.Parse("2991C5CC-9FAD-E711-80D3-00155D2C0A31"));
         }
     }
 }

@@ -1,4 +1,23 @@
-﻿<Search Version="4300" Limit="0" CombineResults="OR" AllCards="true">
+﻿<Search Version="4300" Limit="0" CombineResults="OR">
+<AttributiveSearch>
+<CardTypeQuery CardTypeID="{B9F7BFD7-7429-455E-A3F1-94FFB569C794}">
+<SectionQuery Version="4300" SectionTypeID="{91B2C5F7-9324-4CEF-9AFE-A457C8310F06}">
+<ConditionGroup Alias="alias0" Operation="OR">
+<Condition Alias="alias1">
+<Field FieldType="refid">State</Field>
+<Op>EQ</Op>
+<Value>'{BC7B7AB4-265F-4651-89B3-23083DBBC81F}'</Value>
+</Condition>
+<Condition Alias="alias2">
+<Field FieldType="refid">State</Field>
+<Op>EQ</Op>
+<Value>'{6B28EC4D-565A-435B-89ED-55E4D5509945}'</Value>
+</Condition>
+</ConditionGroup>
+<Options Limit="-1"/>
+</SectionQuery>
+</CardTypeQuery>
+</AttributiveSearch>
 <Scope>
 <Folders Enabled="true">
 <Folder>{13A13FE3-8EC1-41AD-9977-2AA06C23DFD1}</Folder>
