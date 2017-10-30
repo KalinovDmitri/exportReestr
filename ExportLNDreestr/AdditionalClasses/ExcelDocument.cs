@@ -51,13 +51,23 @@ namespace ExportLNDreestr.AdditionalClasses
         /// <param name="columnIndex">Индекс столбца</param>
         /// <param name="color">Цвет шрифта в ячейке</param>
         /// <param name="isItalic">Курсив</param>
-        public void SetCellValue(string cellValue, int rowIndex, int columnIndex, System.Drawing.Color color = default(System.Drawing.Color), bool isItalic = false)
+        public void SetCellValue(string cellValue, int rowIndex, int columnIndex, System.Drawing.Color color = default(System.Drawing.Color), bool isItalic = false, string hyperlink = null)
         {
+
             Excel.Range rng2 = _workSheet.Cells[rowIndex, columnIndex] as Excel.Range;
             rng2.Value2 = cellValue;
+            if (hyperlink != null)
+            {
+                var fontSize = rng2.Font.Size;
+                rng2.Hyperlinks.Add(rng2, hyperlink);
+                rng2.Font.Underline = false;
+                rng2.Font.Size = fontSize;
+            }
             rng2.Font.Color = color;
             rng2.Font.Italic = isItalic;
             rng2.VerticalAlignment = Microsoft.Office.Interop.Excel.Constants.xlCenter;
+            rng2.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            //rng2.Font.ThemeFont = Microsoft.Office.Interop.Excel.XlThemeFont.xlThemeFontNone;
             //rng2.AutoFit();
         }
         /// <summary>

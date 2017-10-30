@@ -125,10 +125,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\UniversalSprUpdate\DocsVisionContext\DocsVisionContext.csproj">
-      <Project>{5d00dfc0-7ad9-46e8-a791-40572d20bfe4}</Project>
-      <Name>DocsVisionContext</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ExportLNDreestr\ExportLNDreestr.csproj">
       <Project>{fd676279-0aaf-4f5a-82bc-408b0dfccab0}</Project>
       <Name>ExportLNDreestr</Name>

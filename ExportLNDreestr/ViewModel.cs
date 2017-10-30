@@ -1,34 +1,18 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Drawing;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-//using System.Windows.Shapes;
-
-using DocsVision.Platform.ObjectManager;
-using DocsVision.Platform.ObjectModel;
-using DocsVisionContext;
-
-
-using DocsVision.BackOffice.ObjectModel;
-using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
-
+using System.Windows;
+using System.Windows.Input;
+using DocsVision.Platform.ObjectManager;
+using DocsVisionContext;
 using ExportLNDreestr.AdditionalClasses;
+using GalaSoft.MvvmLight.CommandWpf;
 using Newtonsoft.Json;
+
 
 namespace ExportLNDreestr
 {
@@ -36,8 +20,8 @@ namespace ExportLNDreestr
     {
         const string PathQueryLNDO = @"Sourse\AllLNDO.txt";
         const string PathQueryLNDK = @"Sourse\AllLNDK.txt";
-        const string PathWithTemplateLNDo = @"\Sourse\РЛО.xlsx";
-        const string PathWithTemplateLNDk = @"\Sourse\РЛК.xlsx";
+        const string PathWithTemplateLNDo = @"\Sourse\RLO.xlsx";
+        const string PathWithTemplateLNDk = @"\Sourse\RLK.xlsx";
 
 
         #region Fields
@@ -252,6 +236,16 @@ namespace ExportLNDreestr
 
             }
         }
+        private ICommand _closeApp;
+        public ICommand CloseApp
+        {
+            get
+            {
+                return _closeApp ?? (_closeApp = new RelayCommand(Close));
+
+            }
+        }
+
 
 
         #endregion Commands
@@ -273,10 +267,12 @@ namespace ExportLNDreestr
             Session = _session;
         }
         #endregion Constructors
+        delegate int ExportCardDate(ExcelDocument excelDoc, Guid CardID, int IndexRow);
+
         #region Methods
         private bool InicializeContext()
         {
-            bool IsConnected = false;
+            bool IsConnected = true;
             if (dvContext == null)
             {
                 try
@@ -287,6 +283,7 @@ namespace ExportLNDreestr
                 }
                 catch (Exception ex)
                 {
+                    IsConnected = false;
                     MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -317,8 +314,8 @@ namespace ExportLNDreestr
             }
             MessageBox.Show("Настройки успешно сохранены", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        
-        public void Cancel()
+
+        private void Cancel()
         {
             if (cancelTokenSource != null)
             {
@@ -327,9 +324,24 @@ namespace ExportLNDreestr
                 IsEnableButtonRLO = true;
                 IsEnableButtonRLK = true;
                 IsEnableButtonCancel = false;
+                Progress = 0;
+                cancelTokenSource.Cancel();
             }
         }
-        public void StartExportLNDO()
+        private void Close()
+        {
+            MessageBox.Show("Закрытие");
+
+            if (dvContext!=null)
+            {
+                Session.Close();
+                dvContext = null;
+            }
+            
+        }
+
+        
+        private void StartExportLNDO()
         {
             if (InicializeContext())
             {
@@ -341,9 +353,9 @@ namespace ExportLNDreestr
             }
             cancelTokenSource = new CancellationTokenSource();
             CancellationToken token = cancelTokenSource.Token;
-            System.Threading.Tasks.Task.Run(() => ExportLND(GetFullPathToCopyTemplate(PathWithTemplateLNDo), PathQueryLNDO, token, ExcelExportCurrentCardFromCardDataO));
+            System.Threading.Tasks.Task.Run(() => ExportLND(5, GetFullPathToCopyTemplate(PathWithTemplateLNDo), PathQueryLNDO, token, ExcelExportCurrentCardFromCardDataO));
         }
-        public void StartExportLNDK()
+        private void StartExportLNDK()
         {
             if (InicializeContext())
             {
@@ -355,78 +367,10 @@ namespace ExportLNDreestr
             }
             cancelTokenSource = new CancellationTokenSource();
             CancellationToken token = cancelTokenSource.Token;
-            System.Threading.Tasks.Task.Run(() => ExportLND(GetFullPathToCopyTemplate(PathWithTemplateLNDk), PathQueryLNDK, token, ExcelExportCurrentCardFromCardDataK));
+            System.Threading.Tasks.Task.Run(() => ExportLND(9, GetFullPathToCopyTemplate(PathWithTemplateLNDk), PathQueryLNDK, token, ExcelExportCurrentCardFromCardDataK));
         }
-
-        delegate int ExportCardDate(ExcelDocument excelDoc, Guid CardID, int IndexRow);
-   
-        /*private void ExportLNDO(CancellationToken token)
-        {
-            token.ThrowIfCancellationRequested();
-            
-            IsEnableButtonRLO = false;
-            IsEnableButtonRLK = false;
-            IsEnableButtonCancel = true;
-            string filePath = Directory.GetCurrentDirectory() + @"\Sourse\РЛО.xlsx";
-            StreamReader reader = new StreamReader(@"Sourse\AllLNDO.txt");
-            string queryXML = reader.ReadToEnd();
-            reader.Close();
-            LogBox = "Запуск выгрузки реестра ЛНД Общества. Поиск Карточек ЛНД...";
-           
-
-            List<Guid> IDs = new List<Guid>();
-            CardDataCollection coll = Session.CardManager.FindCards(queryXML);
-            LogBox = string.Format("Найдено {0} карточек ЛНД", coll.Count.ToString());
-
-            foreach (CardData el in coll)
-            {
-                if (!Equals(el.Id, Guid.Empty))
-                    IDs.Add(el.Id);
-            }
-
-            int counter =  IDs.Count;
-            //LogBox = string.Format("Преобразовано в Guid {0} объектов", counter.ToString());
-
-            ExcelDocument exelDoc = new ExcelDocument(filePath);
-            exelDoc.Visible = true;
-            int indexRow = 5;
-            MaxProgress = counter;
-
-            for (int i = 0; i < counter; i++)
-            {
-                if (!token.IsCancellationRequested)
-                {
-                    LogBox = string.Format("Начата обработка карточки с ID: {0} {1} из {2}", IDs[i].ToString().ToUpper(), i + 1, counter);
-
-                    indexRow = ExcelExportCurrentCardFromCardDataO(exelDoc, IDs[i], indexRow) + 1;
-                    LogBox = string.Format("Завершена обработка карточки с ID: {0} {1} из {2}", IDs[i].ToString().ToUpper(), i + 1, counter);
-                    Progress = i + 1;
-                }
-                else
-                {
-                    if (exelDoc != null)
-                    {
-                        exelDoc.Close();
-                        IsEnableButtonRLO = true;
-                        IsEnableButtonRLK = true;
-                        IsEnableButtonCancel = false;
-                        break;
-                    }
-
-                }
-            }
-            
-            //Session.Close();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-            Progress = 0;
-            MessageBox.Show("Выгрузка завершена");
-            IsEnableButtonRLO = true;
-            IsEnableButtonRLK = true;
-            IsEnableButtonCancel = false;
-        }*/
-        private void ExportLND(string pathWithTemplate, string pathQuery, CancellationToken token, ExportCardDate export)
+    
+        private void ExportLND(int startIndex, string pathWithTemplate, string pathQuery, CancellationToken token, ExportCardDate export)
         {
                  
             token.ThrowIfCancellationRequested();
@@ -441,18 +385,27 @@ namespace ExportLNDreestr
             LogBox = "Запуск выгрузки реестра ЛНД. Поиск Карточек ЛНД...";
 
             List<Guid> IDs = new List<Guid>();
-            CardDataCollection coll = Session.CardManager.FindCards(queryXML);
+            List<CardData> coll = Session.CardManager.FindCards(queryXML).ToList();
+          
             LogBox = string.Format("Поиск завершен. Найдено {0} карточек ЛНД", coll.Count.ToString());
-            
+
+            if (token.IsCancellationRequested) return;
+           
             foreach (CardData el in coll)
             {
                 if (!Equals(el.Id, Guid.Empty))
                     IDs.Add(el.Id);
+  
             }
-            int counter = 50;//IDs.Count;
+            LogBox = "Сортировка полученных данных";
+            IDs = IDs.OrderBy(r => GetSortNumberLND(r)).ToList<Guid>();
+            LogBox = "Сортировка завершена";
+           
+
+            int counter = IDs.Count;;
             ExcelDocument exelDoc = new ExcelDocument(pathWithTemplate);
-            exelDoc.Visible = true;
-            int indexRow = 9;
+           
+            int indexRow = startIndex;
             MaxProgress = counter;
 
             for (int i = 0; i < counter; i++)
@@ -460,28 +413,36 @@ namespace ExportLNDreestr
                 if (!token.IsCancellationRequested)
                 {
                     LogBox = string.Format("Начата обработка карточки с ID: {0} {1} из {2}", IDs[i].ToString().ToUpper(), i + 1, counter);
-
-                    indexRow = export(exelDoc, IDs[i], indexRow) + 1;
+                    try
+                    {
+                        indexRow = export(exelDoc, IDs[i], indexRow) + 1;
+                    }
+                    catch(Exception ex)
+                    {
+                        LogBox = "Что-то пошло не так!!!" + ex.ToString();
+                    }
                     LogBox = string.Format("Завершена обработка карточки с ID: {0} {1} из {2}", IDs[i].ToString().ToUpper(), i + 1, counter);
-                    Progress = i + 1;
+                    if (!token.IsCancellationRequested) Progress = i + 1;//чтобы прогрессбар не прыгал 
                 }
                 else
                 {
                     if (exelDoc != null)
                     {
                         exelDoc.Close();
-                        break;
+                        return;
                     }
 
                 }
             }
 
-            //Session.Close();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
+
+            exelDoc.Visible = true;
+            //GC.Collect();
+            //GC.WaitForPendingFinalizers();
+            //GC.Collect();
             Progress = 0;
-            MessageBox.Show("Выгрузка завершена");
+            MessageBox.Show("Выгрузка завершена", "Реестры ЛНД", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            LogBox = "Выгрузка реестра завершена";
             IsEnableButtonRLO = true;
             IsEnableButtonRLK = true;
             IsEnableButtonCancel = false;
@@ -489,6 +450,7 @@ namespace ExportLNDreestr
 
         private int ExcelExportCurrentCardFromCardDataK(ExcelDocument exelDoc, Guid CardId, int index)
         {
+            //Guid CardId = CardDataLND.Id;
             CardManager CM = Session.CardManager;
             CardData CardDataLND = CM.GetCardData(CardId);
 
@@ -521,8 +483,8 @@ namespace ExportLNDreestr
                     stateName = "Значение не попало в ожидаемы диапазон";
                     break;
             }
-            List<RowData> RDKAct = new List<RowData>();
-            List<RowData> RDOAct = new List<RowData>();
+            List<RowData> allRDKAct = new List<RowData>();
+            List<RowData> allRDOAct = new List<RowData>();
 
             string RDKVv = string.Empty;
             DateTime? dateRDKVv = null;
@@ -542,7 +504,7 @@ namespace ExportLNDreestr
             {
                 foreach (RowData row in hystoryLNDSection)
                 {
-                    Guid rdID = new Guid(row["RDId"].ToString());
+                    Guid rdID = Guid.Parse(row["RDId"].ToString());
                     string typeRow = GetNameOfRefBaseUniversal(row["Type"].ToString());
                     if (typeRow == "РД Компании о вводе")
                     {
@@ -573,7 +535,7 @@ namespace ExportLNDreestr
                         }
                         else
                         {
-                            RDKAct.Add(row);
+                            allRDKAct.Add(row);
                         }
                     }
                     if (typeRow == "РД Общества об актуализации")
@@ -585,7 +547,7 @@ namespace ExportLNDreestr
                         }
                         else
                         {
-                            RDOAct.Add(row);
+                            allRDOAct.Add(row);
                         }
 
                     }
@@ -593,43 +555,84 @@ namespace ExportLNDreestr
                 
             }
 
-            //ВВК Реквизиты РД (вид, дата, номер)
-            //ВВК срок утверждения и введения в действие в ДО
-            //ВВО Реквизиты РД (вид, дата, номер)
-            //ВВО Дата ввода в действие ЛНД
-            //ИЗМК Реквизиты РД (вид, дата, номер)
-            //ИЗМК Срок внесения изменений в ДО
-            //ИЗМО Реквизиты РД (вид, дата, номер)
-            //ИЗМО Дата внесения изменений в ЛНД 
-            //ОТМК Реквизиты РД (вид, дата, номер)
-            //ОТМК Срок внесения изменений в ДО
-            //ОТМО Реквизиты РД (вид, дата, номер)
-            //ОТМО Дата внесения изменений в ЛНД 
-
-
-
-
-
 
             exelDoc.SetCellValue((index - 8).ToString(), index, 1);//Номер сироки
-            exelDoc.SetCellValue(string.Format("{0} \"{1}\"",typeLND,name), index, 2, color);//Вид и наименование ЛНД
+            exelDoc.SetCellValue(string.Format("{0} \"{1}\"", typeLND, name), index, 2, color, false, string.Format("http://{0}/docsvision/?CardID={1}&ShowPanels=2048&", ServerName, "{" + CardId.ToString() + "}"));//Вид и наименование ЛНД
             exelDoc.SetCellValue(approvalNumber, index, 3, color);//Номер утвержденияЛНД
             exelDoc.SetCellValue(version, index, 4, color);//Версия ЛНД
             exelDoc.SetCellValue(stateName, index, 5, color);//Статус действия в ДО
-            exelDoc.SetCellValue(RDKVv, index, 6, color);//ВВК Реквизиты РД (вид, дата, номер)
-            exelDoc.SetCellValue(dateRDKVv.HasValue? dateRDKVv.Value.ToString("d") :  string.Empty, index, 7, color); //ВВК срок утверждения и введения в действие в ДО
-            exelDoc.SetCellValue(RDOVv, index, 8, color);//ВВO Реквизиты РД (вид, дата, номер)
-            exelDoc.SetCellValue(dateRDOVv.HasValue? dateRDOVv.Value.ToString("d") :  string.Empty, index, 9, color); //ВВО Дата ввода в действие ЛНД
-            exelDoc.SetCellValue(RDKFirstAct, index, 10, System.Drawing.Color.Blue);//ВВO Реквизиты РД (вид, дата, номер)
-            exelDoc.SetCellValue(dateRDKFirstAct.HasValue ? dateRDOVv.Value.ToString("d") : string.Empty, index, 11, System.Drawing.Color.Blue); //ВВО Дата ввода в действие ЛНД
-            exelDoc.SetCellValue(RDOFirstAct, index, 12, System.Drawing.Color.Blue);//ВВO Реквизиты РД (вид, дата, номер)
-            exelDoc.SetCellValue(dateRDOFirstAct.HasValue ? dateRDOVv.Value.ToString("d") : string.Empty, index, 13, System.Drawing.Color.Blue); //ВВО Дата ввода в действие ЛНД
-            exelDoc.SetCellValue(RDKOtm, index, 14, color);//ВВO Реквизиты РД (вид, дата, номер)
-            exelDoc.SetCellValue(RDOOtm, index, 16, color);//ВВO Реквизиты РД (вид, дата, номер)
-                                                           //тут должна быть актуализация
+            exelDoc.SetCellValue(RDKVv, index, 6, color);//ВВК
+            exelDoc.SetCellValue(dateRDKVv.HasValue? dateRDKVv.Value.ToString("d") :  string.Empty, index, 7, color); //ВВК дата
+            exelDoc.SetCellValue(RDOVv, index, 8, color);//ВВO
+            exelDoc.SetCellValue(dateRDOVv.HasValue? dateRDOVv.Value.ToString("d") :  string.Empty, index, 9, color); //ВВО Дата 
+            exelDoc.SetCellValue(RDKFirstAct, index, 10, color == System.Drawing.Color.Red ? System.Drawing.Color.Red : System.Drawing.Color.Blue);//АктК1
+            exelDoc.SetCellValue(dateRDKFirstAct.HasValue ? dateRDKFirstAct.Value.ToString("d") : string.Empty, index, 11, color == System.Drawing.Color.Red ? System.Drawing.Color.Red : System.Drawing.Color.Blue); //АктК1 дата
+            exelDoc.SetCellValue(RDOFirstAct, index, 12, color == System.Drawing.Color.Red ? System.Drawing.Color.Red : System.Drawing.Color.Blue);//АктО1
+            exelDoc.SetCellValue(dateRDOFirstAct.HasValue ? dateRDOFirstAct.Value.ToString("d") : string.Empty, index, 13, color == System.Drawing.Color.Red ? System.Drawing.Color.Red : System.Drawing.Color.Blue); //АктО1 дата
+            exelDoc.SetCellValue(RDKOtm, index, 14, color);//ОтмК 
+            exelDoc.SetCellValue(dateRDKOtm.HasValue ? dateRDKOtm.Value.ToString("d") : string.Empty, index, 15, color); //ОтмК дата
+            exelDoc.SetCellValue(RDOOtm, index, 16, color); //ОтмО
+            exelDoc.SetCellValue(dateRDOOtm.HasValue ? dateRDOOtm.Value.ToString("d") : string.Empty, index, 17, color);  //ОтмО дата
+
+
+            if (allRDKAct.Count > 0)
+            {
+                allRDKAct = allRDKAct.OrderBy(r => int.Parse(r["Number"].ToString())).ToList<RowData>();
+                color = color == System.Drawing.Color.Red ? System.Drawing.Color.Red : System.Drawing.Color.Blue;
+                foreach (RowData rowK in allRDKAct)
+                {
+                    Guid rdID = Guid.Empty;
+                    if (Guid.TryParse(rowK["RDId"].ToString(), out rdID))
+                    {
+                        string RDKAct = string.Empty;
+                        DateTime? dateRDKAct = null;
+                        int numberIzm = -1;
+                        string RDOAct = string.Empty;
+                        DateTime? dateRDOAct = null;
+
+
+                        RDKAct = rdID != Guid.Empty ? GetAltDecriptionRDCardData(rdID, true) : string.Empty;
+                        dateRDKVv = (DateTime?)rowK["Date"];
+                        if (int.TryParse(rowK["Number"].ToString(), out numberIzm))
+                        {
+                            RowData rowO = allRDOAct.FirstOrDefault(r => int.Parse(r["Number"].ToString()) == numberIzm);
+                            if (rowO!=null)
+                            {
+                                Guid rdOID = Guid.Parse(rowO["RDId"].ToString());
+                                RDOAct = rdOID != Guid.Empty ? GetAltDecriptionRDCardData(rdOID) : string.Empty;
+                                dateRDOAct = (DateTime?)rowO["Date"];
+                            }
+                        }
+
+                        //заполнение
+                        index++;//переходим на новую строку
+                        exelDoc.SetCellValue((index - 8).ToString(), index, 1);//Номер строки
+                        exelDoc.SetCellValue(string.Format("Изменения №{0} в {1} \"{2}\"", numberIzm, typeLND, name), index, 2, color, false, string.Format("http://{0}/docsvision/?CardID={1}&ShowPanels=2048&", ServerName, "{" + CardId.ToString() + "}"));//Вид и наименование ЛНД
+                        exelDoc.SetCellValue(approvalNumber, index, 3, color);//Номер утвержденияЛНД
+                        exelDoc.SetCellValue(version, index, 4, color);//Версия ЛНД
+                        exelDoc.SetCellValue(stateName, index, 5, color);//Статус действия в ДО
+
+                        exelDoc.SetCellValue(string.Empty, index, 6, color);//пустая ячейка
+                        exelDoc.SetCellValue(string.Empty, index, 7, color);//пустая ячейка
+                        exelDoc.SetCellValue(string.Empty, index, 8, color);//пустая ячейка
+                        exelDoc.SetCellValue(string.Empty, index, 9, color);//пустая ячейка
+
+                        exelDoc.SetCellValue(RDKAct, index, 10, color);//АктК1
+                        exelDoc.SetCellValue(dateRDKAct.HasValue ? dateRDKAct.Value.ToString("d") : string.Empty, index, 11, color); //АктК1 дата
+                        exelDoc.SetCellValue(RDOAct, index, 12, color);//АктО1
+                        exelDoc.SetCellValue(dateRDOAct.HasValue ? dateRDOAct.Value.ToString("d") : string.Empty, index, 13, color); //АктО1 дата
+
+                        exelDoc.SetCellValue(string.Empty, index, 14, color);//пустая ячейка
+                        exelDoc.SetCellValue(string.Empty, index, 15, color);//пустая ячейка
+                        exelDoc.SetCellValue(string.Empty, index, 16, color);//пустая ячейка
+                        exelDoc.SetCellValue(string.Empty, index, 17, color);//пустая ячейка
+
+                    }
+                }
+            }
 
             return index;
-            //throw new NotImplementedException();
+         
 
         }
 
@@ -638,7 +641,7 @@ namespace ExportLNDreestr
         {
             CardManager CM = Session.CardManager;
             CardData CardDataLND = CM.GetCardData(CardId);
-           
+
             RowData additionalPropertiesLNDSection = CardDataLND.Sections[CardDataLND.Type.Sections["AdditionalPropertiesLND"].Id].FirstRow;
             RowData systemLNDSection = CardDataLND.Sections[CardDataLND.Type.Sections["System"].Id].FirstRow;
             RowData mainInfoLND = CardDataLND.Sections[CardDataLND.Type.Sections["MainInfo"].Id].FirstRow;
@@ -751,7 +754,7 @@ namespace ExportLNDreestr
             exelDoc.SetCellValue(owner, index, 2, color);//Владелец
             exelDoc.SetCellValue(numberPG, index, 3, color); // Номер в ПГ
             exelDoc.SetCellValue(datePD, index, 4, color); // Год планирования
-            exelDoc.SetCellValue(name, index, 5, color); // Наименование ЛНД/ Приложения
+            exelDoc.SetCellValue(name, index, 5, color, false, string.Format("http://{0}/docsvision/?CardID={1}&ShowPanels=2048&", ServerName, "{" + CardId.ToString() + "}")); // Наименование ЛНД/ Приложения
             exelDoc.SetCellValue(fileName, index, 6, color); // Имя файла ЛНД/приложения/ редакции ЛНД с изм.
             exelDoc.SetCellValue(сotent, index, 7, color); // Описание
             exelDoc.SetCellValue(number, index, 8, color); // Регистрационный номер ЛНД
@@ -771,6 +774,7 @@ namespace ExportLNDreestr
             exelDoc.SetCellValue(namberRDvv, index, 21, color); // Номер РД
             exelDoc.SetCellValue(regDateRDvv != null ? regDateRDvv.Value.ToString("d") : string.Empty, index, 22, color); // Дата РД
             exelDoc.SetCellValue(typeRDvv, index, 23, color); // Номер РД
+
             //отмена
             exelDoc.SetCellValue(nameRDotm, index, 29, color); // Наименование РД
             exelDoc.SetCellValue(fileNameRDotm, index, 30, color); // Имя файла РД
@@ -801,6 +805,7 @@ namespace ExportLNDreestr
                     }
 
                     exelDoc.SetCellValue("ПАО \"Самаранефтехимроект\"", index, 1, colorIzm);// Юридическое лицо
+
                     exelDoc.SetCellValue(numberPGizm, index, 3, colorIzm); // Номер в ПГ
                     exelDoc.SetCellValue(datePDizm, index, 4, colorIzm); // Год планирования
                     exelDoc.SetCellValue(string.Format("Изменение {0} к \"{1}\"", numberIzm, name), index, 5, colorIzm); // Наименование ЛНД/ Приложения
@@ -809,7 +814,9 @@ namespace ExportLNDreestr
 
                     exelDoc.SetCellValue("Изменение", index, 12, colorIzm); // Тип документа
                     exelDoc.SetCellValue((DateTime?)(rowsAct[i]["Date"]) != null ? ((DateTime?)(rowsAct[i]["Date"])).Value.ToString("d") : string.Empty, index, 13, colorIzm); // дата
+
                     exelDoc.SetCellValue(classificationStr, index, 17, colorIzm); // Бизнес-процесс 1-го и 2-го уровней
+
                     Guid RDact = Guid.Empty; //new Guid();//Context.GetObject<Document>(new Guid(rowsAct[i]["RDId"].ToString()));
                     if (Guid.TryParse(rowsAct[i]["RDId"].ToString(),out RDact))
                     {
@@ -828,13 +835,14 @@ namespace ExportLNDreestr
 
                 if (row != null)
                 {
-                    index++;// следующая строка после изменений
+                    index++;
 
                     string namePril = row["Name"] != null ? row["Name"].ToString() : string.Empty;
                     string fileNamePril = row["FileName"] != null ? row["FileName"].ToString() : string.Empty;
 
                     exelDoc.SetCellValue("ПАО \"Самаранефтехимроект\"", index, 1, color, true);// Юридическое лицо
-                    exelDoc.SetCellValue(owner, index, 2, color);//Владелец
+                    exelDoc.SetCellValue(owner, index, 2, color, false, string.Format("http://{0}/docsvision/?CardID={1}&ShowPanels=2048&", ServerName, "{" + CardId.ToString() + "}"));//Владелец
+
                     exelDoc.SetCellValue(namePril, index, 5, color, true); // Наименование ЛНД/ Приложения
                     exelDoc.SetCellValue(fileNamePril, index, 6, color, true); // Имя файла ЛНД/приложения/ редакции ЛНД с изм.
                     exelDoc.SetCellValue(name, index, 7, color, true); // Описание
@@ -870,7 +878,30 @@ namespace ExportLNDreestr
             return index;
 
         }
-        public string GetFullPathToCopyTemplate(string pathToTemplate)
+        private string GetSortNumberLND(Guid cardLNDID)
+        {
+            string number = string.Empty;
+            CardManager CM = Session.CardManager;
+            CardData CardDataLND = CM.GetCardData(cardLNDID);
+            RowData additionalPropertiesLNDSection = CardDataLND.Sections[CardDataLND.Type.Sections["AdditionalPropertiesLND"].Id].FirstRow;
+            number = string.Format("{0}_{1}", additionalPropertiesLNDSection["ApprovalNumber"] != null ? additionalPropertiesLNDSection["ApprovalNumber"].ToString() : string.Empty,
+                                              additionalPropertiesLNDSection["Version"] != null ? additionalPropertiesLNDSection["Version"].ToString() : string.Empty);
+
+            CM = null;
+            CardDataLND = null;
+            additionalPropertiesLNDSection = null;
+            //GC.Collect();
+            //GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            return number;
+        }
+        /// <summary>
+        /// Осуществляет копирование шаблона реестра во временную папку
+        /// </summary>
+        /// <param name="pathToTemplate">Путь к шаблону реестра</param>
+        /// <returns>Путь к скопированному файлу</returns>
+        private string GetFullPathToCopyTemplate(string pathToTemplate)
         {
             string fullPathToTemplate = string.Format("{0}{1}", Directory.GetCurrentDirectory(), pathToTemplate);
             string fileName = "Реестр ЛНД";
@@ -904,7 +935,7 @@ namespace ExportLNDreestr
         /// </summary>
         /// <param name="UnitIDstr">Идентификатор подразделиения справочника сотрудников</param>
         /// <returns>Полное название подразделения справочника сотрдуников</returns>
-        public string GetFullNameOfUnit(string UnitIDstr)
+        private string GetFullNameOfUnit(string UnitIDstr)
         {
             string fullName = string.Empty;
             Guid UnitID = Guid.Empty;
@@ -922,7 +953,7 @@ namespace ExportLNDreestr
         /// </summary>
         /// <param name="RowIdStr">Идентификатор строки Конструктора справочников</param>
         /// <returns>Наименование строки Конструктора справочников</returns>
-        public string GetNameOfRefBaseUniversal(string RowIdStr)
+        private string GetNameOfRefBaseUniversal(string RowIdStr)
         {
             string name = string.Empty;
             Guid RowId = Guid.Empty;
@@ -935,15 +966,6 @@ namespace ExportLNDreestr
             }
             return name;
         }
-        /*private void GetDataFromRD(Document rd, out string name, out string number, out string fileName, out DateTime? dateRD, out string typeRD)
-        {
-            BaseCardSectionRow for_LNDSection = rd.GetSectionRow("For_LND");
-            name = rd.MainInfo.Name;
-            number = rd.Numbers[0].Number;
-            dateRD = (DateTime?)rd.MainInfo["RegDate"];
-            fileName = for_LNDSection != null ? (for_LNDSection["FileNameRD"] != null ? for_LNDSection["FileNameRD"].ToString() : string.Empty) : string.Empty;
-            typeRD = rd.SystemInfo.CardKind.Name;
-        }*/
         /// <summary>
         /// Возвращяет набор данных из РД для заполнения реестра
         /// </summary>
@@ -972,7 +994,13 @@ namespace ExportLNDreestr
 
             typeRD = kinde["Name"].ToString();
         }
-        public string GetAltDecriptionRDCardData(Guid rd, bool isCompany = false)
+        /// <summary>
+        /// Возвращает альтернативный дайджест для РД в формате Вид от Дата №Номер. Для компанейского общественного рд это будут разные даты и номера
+        /// </summary>
+        /// <param name="rd">Guid РД</param>
+        /// <param name="isCompany">признак компанейский РД или нет</param>
+        /// <returns></returns>
+        private string GetAltDecriptionRDCardData(Guid rd, bool isCompany = false)
         {
             string description = string.Empty;
             string number = string.Empty;
@@ -992,12 +1020,12 @@ namespace ExportLNDreestr
 
             if (isCompany)
             {
-                number = for_LNDSection["NumberOfRD"].ToString();
+                number = for_LNDSection["NumberOfRD"] != null ? for_LNDSection["NumberOfRD"].ToString() : "<номер отсутсвует>";
                 dateRD = (DateTime?)for_LNDSection["DateOfRD"];
             }
             else
             {
-                number = NumbersSection["Number"].ToString();
+                number = NumbersSection["Number"] != null ? NumbersSection["Number"].ToString() : "<номер отсутсвует>";
                 dateRD = (DateTime?)MainInfoSection["RegDate"];
             }
 

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define ExportLNDreestr_TargetDir=$(var.ExportLNDreestr.TargetDir)?>
+	<Product Id="*" Name="ExportLND" Language="1049" Version="1.0.0.2" Manufacturer="Samaraneftekhimproekr" UpgradeCode="4c45d3b2-2ce8-4bc8-bfb0-114459a66c40">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+
+		<Feature Id="ProductFeature" Title="SetupExportLND" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+			<ComponentGroupRef Id="Sourse_files" />
+		
+		</Feature>
+ 
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="ExportLND">
+          <Directory Id="Sourse" Name="Sourse" />
+        </Directory>
+      </Directory>
+    <Directory Id="DesktopFolder" />
+    </Directory>
+  </Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+			<!-- <Component Id="ProductComponent"> -->
+				<!-- TODO: Insert files, registry keys, and other resources here. -->
+			<!-- </Component> -->
+			<Component Id="ExportLNDreestr.exe" Guid="b3533904-ca82-4302-ba52-0eb2257aa11f">
+			  <File Id="ExportLNDreestr.exe" Name="ExportLNDreestr.exe" Source="$(var.ExportLNDreestr_TargetDir)ExportLNDreestr.exe" />
+			</Component>
+			<Component Id="ExportLNDreestr.exe.config" Guid="7074b99d-7627-49cb-b1d5-6d5a07ab8cb6">
+			  <File Id="ExportLNDreestr.exe.config" Name="ExportLNDreestr.exe.config" Source="$(var.ExportLNDreestr_TargetDir)ExportLNDreestr.exe.config" />
+			</Component>
+			
+			<Component Id="CommonServiceLocator.dll" Guid="06a4ebf5-cd48-47a3-ad55-ec7c7f8c8724">
+			  <File Id="CommonServiceLocator.dll" Name="CommonServiceLocator.dll" Source="$(var.ExportLNDreestr_TargetDir)CommonServiceLocator.dll" />
+			</Component>
+			<Component Id="DocsVision.BackOffice.Cards.dll" Guid="b704caf1-0ad4-4e7d-bcaf-726ede409f61">
+			  <File Id="DocsVision.BackOffice.Cards.dll" Name="DocsVision.BackOffice.Cards.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.BackOffice.Cards.dll" />
+			</Component>
+			<Component Id="DocsVision.BackOffice.ObjectModel.dll" Guid="c3eee30e-4c6c-4b71-9e48-2def63a6831a">
+			  <File Id="DocsVision.BackOffice.ObjectModel.dll" Name="DocsVision.BackOffice.ObjectModel.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.BackOffice.ObjectModel.dll" />
+			</Component>
+			<Component Id="DocsVision.BackOffice.WinForms.dll" Guid="1fedcf10-303c-4379-8eab-bc1030b7962b">
+			  <File Id="DocsVision.BackOffice.WinForms.dll" Name="DocsVision.BackOffice.WinForms.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.BackOffice.WinForms.dll" />
+			</Component>
+			<Component Id="Docsvision.DocumentsManagement.dll" Guid="4e8a3e73-9d4d-4799-bd46-578fc2c622ce">
+			  <File Id="Docsvision.DocumentsManagement.dll" Name="Docsvision.DocumentsManagement.dll" Source="$(var.ExportLNDreestr_TargetDir)Docsvision.DocumentsManagement.dll" />
+			</Component>
+			<Component Id="DocsVision.Platform.dll" Guid="3915d1c5-9b48-4ea2-b9a2-5c7c2cbab16e">
+			  <File Id="DocsVision.Platform.dll" Name="DocsVision.Platform.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.Platform.dll" />
+			</Component>
+			<Component Id="DocsVision.Platform.CardHost.dll" Guid="2d853749-b103-4326-ac22-4b415fabc198">
+			  <File Id="DocsVision.Platform.CardHost.dll" Name="DocsVision.Platform.CardHost.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.Platform.CardHost.dll" />
+			</Component>
+			<Component Id="DocsVision.Platform.CardLib.dll" Guid="fb20a539-66c3-4af6-b53e-394b97f971cb">
+			  <File Id="DocsVision.Platform.CardLib.dll" Name="DocsVision.Platform.CardLib.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.Platform.CardLib.dll" />
+			</Component>
+			<Component Id="DocsVision.Platform.ObjectManager.Interop.dll" Guid="97984730-2196-4ca5-b05c-d44f5a6afe9b">
+			  <File Id="DocsVision.Platform.ObjectManager.Interop.dll" Name="DocsVision.Platform.ObjectManager.Interop.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.Platform.ObjectManager.Interop.dll" />
+			</Component>
+			<Component Id="DocsVision.Platform.ObjectModel.dll" Guid="f00585a8-dd3b-4e67-9add-138f7201f940">
+			  <File Id="DocsVision.Platform.ObjectModel.dll" Name="DocsVision.Platform.ObjectModel.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.Platform.ObjectModel.dll" />
+			</Component>
+			<Component Id="DocsVision.Platform.StorageServer.dll" Guid="1f05da76-63e7-49d5-8bb7-f741e642048f">
+			  <File Id="DocsVision.Platform.StorageServer.dll" Name="DocsVision.Platform.StorageServer.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.Platform.StorageServer.dll" />
+			</Component>
+			<Component Id="DocsVision.Platform.SystemCards.ObjectModel.dll" Guid="ecaa9664-740c-4138-8c55-a0d982cf7ece">
+			  <File Id="DocsVision.Platform.SystemCards.ObjectModel.dll" Name="DocsVision.Platform.SystemCards.ObjectModel.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.Platform.SystemCards.ObjectModel.dll" />
+			</Component>
+			<Component Id="GalaSoft.MvvmLight.dll" Guid="053d2480-cd98-4719-bc45-fa80b4770407">
+			  <File Id="GalaSoft.MvvmLight.dll" Name="GalaSoft.MvvmLight.dll" Source="$(var.ExportLNDreestr_TargetDir)GalaSoft.MvvmLight.dll" />
+			</Component>
+				
+			<Component Id="DocsVision.Platform.ObjectManager.dll" Guid="f9a057ed-1a18-40da-9d01-3c4b4def447d">
+			  <File Id="DocsVision.Platform.ObjectManager.dll" Name="DocsVision.Platform.ObjectManager.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.Platform.ObjectManager.dll" />
+			</Component>
+			<Component Id="Newtonsoft.Json.dll" Guid="6df6764d-ae22-4b7c-a02f-7cf423938290">
+			  <File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" Source="$(var.ExportLNDreestr_TargetDir)Newtonsoft.Json.dll" />
+			</Component>
+			<Component Id="System.Windows.Interactivity.dll" Guid="1b596700-ece3-4430-8e59-039a6d282327">
+			  <File Id="System.Windows.Interactivity.dll" Name="System.Windows.Interactivity.dll" Source="$(var.ExportLNDreestr_TargetDir)System.Windows.Interactivity.dll" />
+			</Component>
+			<Component Id="GalaSoft.MvvmLight.Platform.dll" Guid="ef6aea9b-dce5-4fc8-b4b6-58a04f673c76">
+			  <File Id="GalaSoft.MvvmLight.Platform.dll" Name="GalaSoft.MvvmLight.Platform.dll" Source="$(var.ExportLNDreestr_TargetDir)GalaSoft.MvvmLight.Platform.dll" />
+			</Component>
+			<Component Id="GalaSoft.MvvmLight.Extras.dll" Guid="3d04d155-e4a4-4366-ae65-c4737531edcf">
+			  <File Id="GalaSoft.MvvmLight.Extras.dll" Name="GalaSoft.MvvmLight.Extras.dll" Source="$(var.ExportLNDreestr_TargetDir)GalaSoft.MvvmLight.Extras.dll" />
+			</Component>
+			<Component Id="DocsVision.Workflow.Interfaces.dll" Guid="5fe456ec-cbe1-45f8-95f5-a62bb4404b8f">
+			  <File Id="DocsVision.Workflow.Interfaces.dll" Name="DocsVision.Workflow.Interfaces.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.Workflow.Interfaces.dll" />
+			</Component>
+			<Component Id="DocsVision.Platform.SystemObjects.dll" Guid="b3c8c098-517b-4dbc-81cd-ee4f71d2dc26">
+			  <File Id="DocsVision.Platform.SystemObjects.dll" Name="DocsVision.Platform.SystemObjects.dll" Source="$(var.ExportLNDreestr_TargetDir)DocsVision.Platform.SystemObjects.dll" />
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+	<Fragment>
+
+	</Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="Sourse_files" Directory="Sourse">
+      <Component Id="Sourse_AllLNDO.txt" Guid="e6c73a94-7ded-499d-bd1b-1b737f1d4d0e">
+        <File Id="Sourse_AllLNDO.txt" Name="AllLNDO.txt" Source="$(var.ExportLNDreestr_TargetDir)Sourse\AllLNDO.txt" />
+      </Component>
+      <Component Id="Sourse_RLO.xlsx" Guid="25ffe486-eb30-481f-b450-5a143de5ed36">
+        <File Id="Sourse_RLO.xlsx" Name="RLO.xlsx" Source="$(var.ExportLNDreestr_TargetDir)Sourse\RLO.xlsx" />
+      </Component>
+      <Component Id="Sourse_ConnectionSettings.json" Guid="78db0d41-dcef-4c0e-b49e-7f4397d976f1">
+        <File Id="Sourse_ConnectionSettings.json" Name="ConnectionSettings.json" Source="$(var.ExportLNDreestr_TargetDir)Sourse\ConnectionSettings.json" />
+      </Component>
+      <Component Id="Sourse_RLK.xlsx" Guid="78a4bdc5-70b0-40d2-85d0-f5cf0396998f">
+        <File Id="Sourse_RLK.xlsx" Name="RLK.xlsx" Source="$(var.ExportLNDreestr_TargetDir)Sourse\RLK.xlsx" />
+      </Component>
+      <Component Id="Sourse_AllLNDK.txt" Guid="8f06aad2-ac85-4f34-ab91-4af32ac45483">
+        <File Id="Sourse_AllLNDK.txt" Name="AllLNDK.txt" Source="$(var.ExportLNDreestr_TargetDir)Sourse\AllLNDK.txt" />
+      </Component>
+      <Component Id="Sourse_Icon.ico" Guid="3125ddf6-8f52-40d3-96c7-7eec701c2381">
+        <File Id="Sourse_Icon.ico" Name="Icon.ico" Source="$(var.ExportLNDreestr_TargetDir)Sourse\Icon.ico" />
+      </Component>
+      
+      
+    </ComponentGroup>
+  </Fragment>
+  
+</Wix>
