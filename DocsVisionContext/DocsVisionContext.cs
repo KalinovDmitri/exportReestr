@@ -177,8 +177,8 @@ namespace DocsVisionContext
 
         private const string ServiceUrl = "http://sam-dvsv-01/docsvision/StorageServer/StorageServerService.asmx";
         private const string BaseName = "docsvision";
-        private const string UserName = @"rosneft\dv_services";
-        private const string Password = "1pEI5LVd";
+        private const string UserName = @"";
+        private const string Password = "";
 
         private const string ServiceUrlTEST = "http://SAM-TEST-VDBSV/DocsVision/StorageServer/StorageServerService.asmx";
         private const string BaseNameTEST = "docsvision_in54";
