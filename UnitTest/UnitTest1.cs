@@ -39,8 +39,8 @@ namespace UnitTest
         private ViewModel VievModelTst = null;
         private const string ServiceUrl = "http://sam-dvsv-01/docsvision/StorageServer/StorageServerService.asmx";
         private const string BaseName = "docsvision";
-        private const string UserName = @"rosneft\dv_services";
-        private const string Password = "1pEI5LVd";
+        private const string UserName = @"rosneft\";
+        private const string Password = "";
         /// <summary>
         /// Инициализация тестов
         /// </summary>
